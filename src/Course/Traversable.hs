@@ -45,8 +45,8 @@ instance Traversable ExactlyOne where
     (a -> f b)
     -> ExactlyOne a
     -> f (ExactlyOne b)
-  traverse =
-    error "todo: Course.Traversable traverse#instance ExactlyOne"
+  traverse fn (ExactlyOne a) = ExactlyOne <$> fn a
+    
 
 instance Traversable Optional where
   traverse ::
@@ -54,8 +54,9 @@ instance Traversable Optional where
     (a -> f b)
     -> Optional a
     -> f (Optional b)
-  traverse =
-    error "todo: Course.Traversable traverse#instance Optional"
+  traverse _ Empty = pure Empty
+  traverse fn (Full a) = Full <$> fn a
+    
 
 -- | Sequences a traversable value of structures to a structure of a traversable value.
 --
@@ -71,8 +72,8 @@ sequenceA ::
   (Applicative f, Traversable t) =>
   t (f a)
   -> f (t a)
-sequenceA =
-  error "todo: Course.Traversable#sequenceA"
+sequenceA = traverse id
+  -- error "todo: Course.Traversable#sequenceA"
 
 instance (Traversable f, Traversable g) =>
   Traversable (Compose f g) where
@@ -87,8 +88,8 @@ data Product f g a =
 instance (Functor f, Functor g) =>
   Functor (Product f g) where
 -- Implement the (<$>) function for a Functor instance for Product
-  (<$>) =
-    error "todo: Course.Traversable (<$>)#instance (Product f g)"
+  fn <$> (Product f g) = Product  (fn <$> f) (fn <$> g)
+    -- error "todo: Course.Traversable (<$>)#instance (Product f g)"
 
 instance (Traversable f, Traversable g) =>
   Traversable (Product f g) where
