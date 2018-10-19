@@ -36,3 +36,5 @@ TAGS
 # Vagrant
 .vagrant
 ops/*.retry
+fp-course.sublime-project
+fp-course.sublime-workspace
