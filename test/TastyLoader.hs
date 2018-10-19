@@ -16,8 +16,14 @@ import Course.StateTest (test_State)
 import Course.StateTTest (test_StateT)
 import Course.ValidationTest (test_Validation)
 
+import System.Environment
+-- import Test.Tasty.Ingredients.ConsoleReporter
+
 main :: IO ()
-main = defaultMain tests
+main = do
+  setEnv "TASTY_HIDE_SUCCESSES" "true"
+  -- let opts = setOption (HideSuccesses True) mempty
+  defaultMain tests
 
 tests :: TestTree
 tests =
