@@ -263,8 +263,14 @@ findLeft ::
   (a -> Bool)
   -> ListZipper a
   -> MaybeListZipper a
-findLeft =
-  error "todo: Course.ListZipper#findLeft"
+findLeft _ (ListZipper Nil _ _) = IsNotZ
+findLeft pred (ListZipper lz f rz) = 
+  let (before, after) = break pred lz in
+    case length after of
+      0 -> IsNotZ
+      _ -> IsZ $ ListZipper (drop 1 after) (headOr undefined after) (reverse before ++ (f:.rz))
+
+  -- error "todo: Course.ListZipper#findLeft"
     
 -- | Seek to the right for a location matching a predicate, excluding the
 -- focus.
@@ -288,8 +294,8 @@ findRight ::
   (a -> Bool)
   -> ListZipper a
   -> MaybeListZipper a
-findRight =
-  error "todo: Course.ListZipper#findRight"
+findRight _ (ListZipper _ _ Nil) = IsNotZ
+findRight pred (ListZipper l f (h :. t)) = let lz = ListZipper (f :. l) h t in (if pred h then IsZ else findRight pred) lz
 
 -- | Move the zipper left, or if there are no elements to the left, go to the far right.
 --
@@ -301,8 +307,10 @@ findRight =
 moveLeftLoop ::
   ListZipper a
   -> ListZipper a
-moveLeftLoop =
-  error "todo: Course.ListZipper#moveLeftLoop"
+moveLeftLoop (ListZipper (h:.t) f r) = ListZipper t h (f :. r)
+moveLeftLoop (ListZipper Nil f r) = case reverse (f:.r) of
+  Nil -> error "wtf"
+  (h:.t) -> ListZipper t h Nil
 
 -- | Move the zipper right, or if there are no elements to the right, go to the far left.
 --
