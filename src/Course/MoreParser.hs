@@ -306,7 +306,7 @@ sepby1 ::
   -> Parser (List a)
 sepby1 val sep = do
     f <- val
-    rest <- list $ val <* sep
+    rest <- list $ sep *> val 
     pure $ f :. rest
   
 

@@ -109,7 +109,7 @@ toSpecialCharacter c =
 -- True
 jsonString ::
   Parser Chars
-jsonString = between (string "\"") (string "\"") (list  (jsonSC ||| (is '\\' *> hexu) ||| is ' ' ||| alpha))
+jsonString = between (is '\"') (charTok '\"') (list  (jsonSC ||| (is '\\' *> hexu) ||| is ' ' ||| alpha))
   {-"{ \"key1\" : true }"-}
 
 jsonSC :: Parser Char
@@ -273,7 +273,22 @@ jsonObject = betweenSepbyComma '{' '}' $ do
 jsonValue ::
   Parser JsonValue
 jsonValue =
-   error "todo: Course.JsonParser#jsonValue"
+   (JsonRational <$> jsonNumber)
+   |||
+   (jsonTrue *> pure JsonTrue)
+   |||
+   (jsonFalse *> pure JsonFalse)
+   |||
+   (jsonNull *> pure JsonNull )
+   |||
+   (JsonString <$> jsonString)
+   |||
+   (JsonObject <$> jsonObject)
+   -- |||
+   -- (JsonArray <$> list jsonValue)
+   -- error "todo: Course.JsonParser#jsonValue"
+
+
 
 -- | Read a file into a JSON value.
 --
